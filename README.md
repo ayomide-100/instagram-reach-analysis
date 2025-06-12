@@ -1,4 +1,4 @@
-#  Reach Analysis and Prediction using Instagram Data
+#  Instagram Reach Analysis and Engagement Prediction
 
 This project explores and analyzes Instagram data to identify trends, user engagement patterns, and factors that contribute to reach. It uses various data visualization and machine learning tools to gain insights from the dataset.
 

@@ -4,4 +4,4 @@ seaborn
 pandas
 plotly
 xgboost
-mypy
+numpy

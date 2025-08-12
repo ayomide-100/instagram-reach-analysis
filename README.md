@@ -5,7 +5,7 @@ This project explores and analyzes Instagram data to identify trends, user engag
 
 ## Project Overview
 
-- **Data Source**: `InstagramData.csv`
+- **Data Source**: `instagram_data.csv`
 - **Goal**: Analyze and visualize the factors that impact user engagement and content reach on Instagram.
 
 ##  Key Features

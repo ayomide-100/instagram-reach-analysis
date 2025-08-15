@@ -9,9 +9,9 @@ from typing import List
 import string
 
 
-nltk.download("punkt")
-nltk.download("stopwords")
-nltk.download("wordnet")
+#nltk.download("punkt")
+#nltk.download("stopwords")
+#nltk.download("wordnet")
 
 
 

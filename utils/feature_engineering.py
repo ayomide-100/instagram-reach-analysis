@@ -22,13 +22,20 @@ def add_engagement_rate(df: pd.DataFrame) -> pd.DataFrame:
         df['Likes'] + df['Comments'] + df['Shares'] + df['Saves']
     ) / df['Impressions']
     return df
+def len_hashtags(x:str):
+    return len(str(x).split())
+
 
 def add_hashtag_count(df: pd.DataFrame) -> pd.DataFrame:
-    df['HashtagCount'] = df['Hashtags'].apply(lambda x: len(str(x).split()))
+    df['HashtagCount'] = df['Hashtags'].apply(len_hashtags)
     return df
 
+
+def cap_len(x: str):
+    return len(str(x).split())
+
 def add_caption_length(df: pd.DataFrame) -> pd.DataFrame:
-    df['CaptionLength'] = df['Caption'].apply(lambda x: len(str(x).split()))
+    df['CaptionLength'] = df['Caption'].apply(cap_len)
     return df
 
 def add_hashtag_density(df: pd.DataFrame) -> pd.DataFrame:

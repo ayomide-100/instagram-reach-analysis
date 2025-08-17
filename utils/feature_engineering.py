@@ -29,7 +29,9 @@ def len_hashtags(x:str):
 def add_hashtag_count(df: pd.DataFrame) -> pd.DataFrame:
     df['HashtagCount'] = df['Hashtags'].apply(len_hashtags)
     return df
-
+def add_hashtags_count(df: pd.DataFrame) -> pd.DataFrame:
+    df['HashtagCount'] = df['Hashtags'].str.count('#')
+    return df
 
 def cap_len(x: str):
     return len(str(x).split())

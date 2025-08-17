@@ -3,10 +3,9 @@ import pandas as pd
 from sklearn.pipeline import Pipeline, make_pipeline, FunctionTransformer
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.preprocessing import StandardScaler, LabelEncoder, OneHotEncoder
 from sklearn.compose import ColumnTransformer, make_column_transformer, make_column_selector
 from xgboost import XGBRegressor
-from train import grid_search_train
 from column_functions import TfidfWrapper, ravel_values, DateTimeConverter
 
 
@@ -18,25 +17,19 @@ scale = Pipeline([
     ("scaler", StandardScaler())
 ]) 
 
-cols = ['Impressions', 'Likes', 'Profile Visits', 'CaptionLength',
-       'DayOfWeek', 'IsWeekend', 'Month',
-       'HourOfDay', 'NumOfHashtags']
-
-scale_col = ['Impressions', 'Likes', 'Profile Visits', 
-             'CaptionLength', 'DayOfWeek', 'Month',
-            'HourOfDay', 'NumOfHashtags']
-
-datetime = Pipeline([
-    ("datetime", DateTimeConverter)
-])
-
-preprocessing = ColumnTransformer([
-    ("vectorizer", vectorizer, ["Caption", "Hashtags"]),
-    ("scaler", scale, scale_col),
-    ("datetime", datetime, "Timestamp")
-])
+text_features = ['Caption', 'Hashtags']
+scale_features = ['CaptionLength', 'DayOfWeek', 'Month',
+                  'HourOfDay', 'HashtagCount']
+passthrough_features = ['HashtagDensity', 'IsWeekend']
+timestamp_feature = ['Timestamp']
+cat_feature = ['Content Type']
 
 
-full_model_pipeline = Pipeline([
-    ("preprocessing", preprocessing)
-])
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('text', TfidfVectorizer(), 'Caption'),  
+        ('hashtags', TfidfVectorizer(), 'Hashtags'),  
+        ('scale', StandardScaler(), scale_features),
+        ('encode', OneHotEncoder(), cat_feature)
+    ]
+)

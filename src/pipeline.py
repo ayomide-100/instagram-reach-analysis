@@ -9,27 +9,38 @@ from xgboost import XGBRegressor
 from column_functions import TfidfWrapper, ravel_values, DateTimeConverter
 
 
-
-
 flatten = FunctionTransformer(ravel_values, validate=False)
+
 vectorizer = make_pipeline(flatten, TfidfVectorizer(preprocessor=None, lowercase=False))
+
 scale = Pipeline([
-    ("scaler", StandardScaler())
-]) 
+ ("scaler", StandardScaler())
+
+])
+
+
 
 text_features = ['Caption', 'Hashtags']
+
 scale_features = ['CaptionLength', 'DayOfWeek', 'Month',
-                  'HourOfDay', 'HashtagCount']
+'HourOfDay', 'HashtagCount']
+
 passthrough_features = ['HashtagDensity', 'IsWeekend']
+
 timestamp_feature = ['Timestamp']
+
 cat_feature = ['Content Type']
+
+
+
 
 
 preprocessor = ColumnTransformer(
     transformers=[
-        ('text', TfidfVectorizer(), 'Caption'),  
-        ('hashtags', TfidfVectorizer(), 'Hashtags'),  
-        ('scale', StandardScaler(), scale_features),
-        ('encode', OneHotEncoder(), cat_feature)
-    ]
+('text', TfidfVectorizer(max_features=100, min_df=2, ngram_range=(1, 2)), 'Caption'), 
+('hashtags', TfidfVectorizer(max_features=100, min_df=2, ngram_range=(1, 2)), 'Hashtags'), 
+ ('scale', StandardScaler(), scale_features),
+ ('encode', OneHotEncoder(), cat_feature)
+]
+
 )

@@ -102,7 +102,7 @@ def load_data():
 
 def main():
     # Title and header
-    st.markdown('<h1 class="main-header">📊 Social Media Analytics Dashboard</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">Instagram Reach Analysis and Prediction Dashboard</h1>', unsafe_allow_html=True)
     
     # Load data
     df = load_data()
@@ -110,7 +110,7 @@ def main():
         st.stop()
     
     # Sidebar filters
-    st.sidebar.title("🔧 Filters & Controls")
+    st.sidebar.title(" Filters & Controls")
     
     # Date range filter
     date_range = st.sidebar.date_input(
@@ -152,9 +152,9 @@ def main():
         return
     
     # Main dashboard tabs
-    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
         "📈 Overview", "⏰ Time Analysis", "🎯 Content Performance", 
-        "🚀 Engagement Deep Dive", "🔍 Advanced Analytics"
+        "🚀 Engagement Deep Dive", "🔍 Advanced Analytics", "🔮 Predictions"
     ])
     
     with tab1:
@@ -171,10 +171,21 @@ def main():
     
     with tab5:
         show_advanced_analytics(filtered_df)
+    with tab6:
+        predict()
+        
+
+
+
+
+def predict():
+    st.text_input(label="Enter Caption" )
+    st.text_input(label="Enter Hashtags" )
+    st.text_input(label="Enter Day",  )
 
 def show_overview(df):
     """Overview dashboard section"""
-    st.header("📊 Key Performance Metrics")
+    st.header(" Key Performance Metrics")
     
     # Key metrics
     col1, col2, col3, col4 = st.columns(4)
@@ -211,7 +222,7 @@ def show_overview(df):
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("📈 Impressions vs Engagement Over Time")
+        st.subheader(" Impressions vs Engagement Over Time")
         fig = px.scatter(
             df, x='Impressions', y='TotalEngagement', 
             size='Profile Visits', color='Content Type',
@@ -222,7 +233,7 @@ def show_overview(df):
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
-        st.subheader("🎯 Content Type Performance")
+        st.subheader(" Content Type Performance")
         content_metrics = df.groupby('Content Type').agg({
             'Impressions': 'mean',
             'TotalEngagement': 'mean',
@@ -241,7 +252,7 @@ def show_overview(df):
         st.plotly_chart(fig, use_container_width=True)
     
     # Traffic source analysis
-    st.subheader("🌊 Traffic Source Distribution")
+    st.subheader(" Traffic Source Distribution")
     traffic_cols = ['From Home', 'From Hashtags', 'From Explore', 'From Other']
     traffic_totals = df[traffic_cols].sum()
     
@@ -254,10 +265,10 @@ def show_overview(df):
 
 def show_time_analysis(df):
     """Time-based analysis section"""
-    st.header("⏰ Temporal Performance Analysis")
+    st.header(" Temporal Performance Analysis")
     
     # Time series plot
-    st.subheader("📈 Performance Trends Over Time")
+    st.subheader(" Performance Trends Over Time")
     
     # Aggregate daily metrics
     daily_metrics = df.groupby('Date').agg({
@@ -308,7 +319,7 @@ def show_time_analysis(df):
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("🕐 Best Posting Hours")
+        st.subheader(" Best Posting Hours")
         hourly_performance = df.groupby('Hour').agg({
             'Impressions': 'mean',
             'EngagementRate': 'mean',
@@ -324,7 +335,7 @@ def show_time_analysis(df):
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
-        st.subheader("📅 Day of Week Performance")
+        st.subheader(" Day of Week Performance")
         # Reorder days properly
         day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
         df['DayOfWeek'] = pd.Categorical(df['DayOfWeek'], categories=day_order, ordered=True)
@@ -345,7 +356,7 @@ def show_time_analysis(df):
         st.plotly_chart(fig, use_container_width=True)
     
     # Monthly trends
-    st.subheader("📆 Monthly Performance Trends")
+    st.subheader(" Monthly Performance Trends")
     monthly_data = df.groupby(['Year', 'MonthNum']).agg({
         'Impressions': 'sum',
         'TotalEngagement': 'sum',
@@ -372,10 +383,10 @@ def show_time_analysis(df):
 
 def show_content_performance(df):
     """Content performance analysis section"""
-    st.header("🎯 Content Performance Analysis")
+    st.header(" Content Performance Analysis")
     
     # Top performing posts
-    st.subheader("🏆 Top Performing Posts")
+    st.subheader(" Top Performing Posts")
     
     metric_choice = st.selectbox(
         "Sort by:",
@@ -393,7 +404,7 @@ def show_content_performance(df):
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("📝 Caption Length vs Performance")
+        st.subheader(" Caption Length vs Performance")
         fig = px.scatter(
             df, x='CaptionLength', y='EngagementRate',
             color='Content Type', size='Impressions',
@@ -404,7 +415,7 @@ def show_content_performance(df):
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
-        st.subheader("🏷️ Hashtag Performance")
+        st.subheader(" Hashtag Performance")
         fig = px.scatter(
             df, x='HashtagCount', y='EngagementRate',
             color='Content Type', size='Impressions',
@@ -415,7 +426,7 @@ def show_content_performance(df):
         st.plotly_chart(fig, use_container_width=True)
     
     # Content score distribution
-    st.subheader("⭐ Content Score Distribution")
+    st.subheader(" Content Score Distribution")
     fig = px.histogram(
         df, x='ContentScore', color='Content Type',
         title="Distribution of Content Performance Scores",
@@ -426,10 +437,10 @@ def show_content_performance(df):
 
 def show_engagement_analysis(df):
     """Detailed engagement analysis"""
-    st.header("🚀 Engagement Deep Dive")
+    st.header(" Engagement Deep Dive")
     
     # Engagement breakdown
-    st.subheader("💫 Engagement Type Analysis")
+    st.subheader(" Engagement Type Analysis")
     
     engagement_cols = ['Likes', 'Comments', 'Shares', 'Saves']
     engagement_totals = df[engagement_cols].sum()
@@ -456,7 +467,7 @@ def show_engagement_analysis(df):
         st.plotly_chart(fig, use_container_width=True)
     
     # Correlation heatmap
-    st.subheader("🔗 Correlation Analysis")
+    st.subheader(" Correlation Analysis")
     numeric_cols = ['Impressions', 'Likes', 'Comments', 'Shares', 'Saves', 
                    'Profile Visits', 'Follows', 'CaptionLength', 'HashtagCount']
     correlation_matrix = df[numeric_cols].corr()
@@ -471,7 +482,7 @@ def show_engagement_analysis(df):
     st.plotly_chart(fig, use_container_width=True)
     
     # Engagement rate by content characteristics
-    st.subheader("📊 Engagement Patterns")
+    st.subheader(" Engagement Patterns")
     
     col1, col2 = st.columns(2)
     
@@ -511,10 +522,10 @@ def show_engagement_analysis(df):
 
 def show_advanced_analytics(df):
     """Advanced analytics and insights"""
-    st.header("🔍 Advanced Analytics & Insights")
+    st.header(" Advanced Analytics & Insights")
     
     # Performance prediction model (simple)
-    st.subheader("🎯 Performance Insights")
+    st.subheader(" Performance Insights")
     
     col1, col2 = st.columns(2)
     
@@ -545,7 +556,7 @@ def show_advanced_analytics(df):
         st.plotly_chart(fig, use_container_width=True)
     
     # Optimal posting recommendations
-    st.subheader("💡 Optimization Recommendations")
+    st.subheader(" Optimization Recommendations")
     
     # Find best performing combinations
     best_hour = df.loc[df['EngagementRate'].idxmax(), 'Hour']
@@ -571,7 +582,7 @@ def show_advanced_analytics(df):
             st.metric(key, value)
     
     # Trend analysis
-    st.subheader("📈 Trend Analysis")
+    st.subheader(" Trend Analysis")
     
     # Calculate rolling averages
     df_sorted = df.sort_values('Timestamp')
@@ -600,7 +611,7 @@ def show_advanced_analytics(df):
     st.plotly_chart(fig, use_container_width=True)
     
     # Summary statistics
-    st.subheader("📋 Statistical Summary")
+    st.subheader(" Statistical Summary")
     
     summary_stats = df[['Impressions', 'TotalEngagement', 'EngagementRate', 
                        'Profile Visits', 'Follows', 'ContentScore']].describe().round(2)

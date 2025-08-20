@@ -13,7 +13,7 @@ warnings.filterwarnings('ignore')
 
 
 def show_overview(df):
-    """Overview dashboard section"""
+    """overview dashboard ui"""
     st.header(" Key Performance Metrics")
     
     
@@ -47,7 +47,7 @@ def show_overview(df):
             delta=f"{df['ConversionRate'].mean():.2%} conversion"
         )
     
-    # Main overview charts
+    
     col1, col2 = st.columns(2)
     
     with col1:

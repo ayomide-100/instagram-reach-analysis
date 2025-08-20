@@ -16,13 +16,13 @@ warnings.filterwarnings('ignore')
 
 
 def show_time_analysis(df):
-    """Time-based analysis section"""
+    """time-based analysis ui"""
     st.header(" Temporal Performance Analysis")
     
-    # Time series plot
+    
     st.subheader(" Performance Trends Over Time")
     
-    # Aggregate daily metrics
+    
     daily_metrics = df.groupby('Date').agg({
         'Impressions': 'sum',
         'TotalEngagement': 'sum',
@@ -31,7 +31,7 @@ def show_time_analysis(df):
         'EngagementRate': 'mean'
     }).reset_index()
     
-    # Create subplot
+    
     fig = make_subplots(
         rows=2, cols=2,
         subplot_titles=('Daily Impressions', 'Daily Engagement', 'Profile Visits', 'Follows'),
@@ -39,7 +39,7 @@ def show_time_analysis(df):
                [{"secondary_y": False}, {"secondary_y": False}]]
     )
     
-    # Add traces
+    
     fig.add_trace(
         go.Scatter(x=daily_metrics['Date'], y=daily_metrics['Impressions'], 
                   name='Impressions', line=dict(color='blue')),
@@ -67,7 +67,7 @@ def show_time_analysis(df):
     fig.update_layout(height=600, showlegend=False)
     st.plotly_chart(fig, use_container_width=True)
     
-    # Hourly and daily patterns
+    
     col1, col2 = st.columns(2)
     
     with col1:
@@ -88,7 +88,7 @@ def show_time_analysis(df):
     
     with col2:
         st.subheader(" Day of Week Performance")
-        # Reorder days properly
+        
         day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
         df['DayOfWeek'] = pd.Categorical(df['DayOfWeek'], categories=day_order, ordered=True)
         
@@ -107,7 +107,7 @@ def show_time_analysis(df):
         fig.update_layout(height=400)
         st.plotly_chart(fig, use_container_width=True)
     
-    # Monthly trends
+    
     st.subheader(" Monthly Performance Trends")
     monthly_data = df.groupby(['Year', 'MonthNum']).agg({
         'Impressions': 'sum',
@@ -116,8 +116,7 @@ def show_time_analysis(df):
         'Follows': 'sum'
     }).reset_index()
     
-    # Create a date column for proper sorting
-    # FIX: Construct datetime from a dictionary with lowercase keys
+    
     monthly_data['Date'] = pd.to_datetime(dict(year=monthly_data.Year, month=monthly_data.MonthNum, day=1))
     monthly_data = monthly_data.sort_values('Date')
     

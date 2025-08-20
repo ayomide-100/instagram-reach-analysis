@@ -17,7 +17,7 @@ from ui.advanced_analytics import show_advanced_analytics
 from ui.inference import predict
 warnings.filterwarnings('ignore')
 
-# ------ configuring the page and page setup
+
 st.set_page_config(
     page_title="Instagram Reach Analysis and Prediction Dashboard",
     page_icon="📊",
@@ -25,7 +25,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for better styling
+# custom CSS styling
 st.markdown("""
 <style>
     .main-header {
@@ -53,32 +53,32 @@ st.markdown("""
 def load_data():
     """Load and preprocess the data"""
     try:
-        # Load the CSV file
+        # loads the data
         df = pd.read_csv('data/processed/clean_data.csv')
         
-        # Convert timestamp to datetime
+        # converts timestamp to datetime
         df['Timestamp'] = pd.to_datetime(df['Timestamp'])
         
-        # Feature Engineering
+        # feature engineering 
         df['Date'] = df['Timestamp'].dt.date
         df['Hour'] = df['Timestamp'].dt.hour
         df['DayOfWeek'] = df['Timestamp'].dt.day_name()
-        df['IsWeekend'] = df['Timestamp'].dt.dayofweek.isin([5, 6]).astype(int) # 5=Sat, 6=Sun
+        df['IsWeekend'] = df['Timestamp'].dt.dayofweek.isin([5, 6]).astype(int) 
         df['Month'] = df['Timestamp'].dt.month_name()
         df['MonthNum'] = df['Timestamp'].dt.month
         df['Year'] = df['Timestamp'].dt.year
         df['Quarter'] = df['Timestamp'].dt.quarter
         
-        # Calculate additional metrics
+        # calculates metrics
         df['TotalEngagement'] = df['Likes'] + df['Comments'] + df['Shares'] + df['Saves']
         df['EngagementPerImpression'] = df['TotalEngagement'] / df['Impressions']
         df['ConversionRate'] = df['Follows'] / df['Profile Visits']
         df['ConversionRate'] = df['ConversionRate'].fillna(0)
         
-        # Calculate reach efficiency
+        # calculate reach efficiency
         df['ReachEfficiency'] = df['Profile Visits'] / df['Impressions']
         
-        # Content performance score (normalized)
+        # content performance score 
         df['ContentScore'] = (
             df['Likes'] * 1 + 
             df['Comments'] * 3 + 
@@ -87,7 +87,7 @@ def load_data():
             df['Follows'] * 10
         ) / df['Impressions']
         
-        # Traffic source diversity (entropy-based)
+        # traffic source diversity (entropy-based)
         traffic_cols = ['From Home', 'From Hashtags', 'From Explore', 'From Other']
         df['TrafficDiversity'] = df[traffic_cols].apply(
             lambda row: -sum([p * np.log(p + 1e-10) for p in row / (row.sum() + 1e-10)]), axis=1

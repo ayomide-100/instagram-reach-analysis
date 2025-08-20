@@ -15,7 +15,7 @@ import string
 
 
 
-# Combining NLTK + Custom stopwords
+
 nltk_stopwords = set(stopwords.words("english"))
 custom_stopwords = {
     # social media words
@@ -36,12 +36,12 @@ lemmatizer = WordNetLemmatizer()
 
 
 def remove_dates(text: str) -> str:
-    # Remove months and year-like patterns
+    """Remove months and year-like patterns"""
     text = re.sub(r'\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|'
                   r'sep(?:t)?(?:ember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b[\s\-.,]*\d{2,4}', '',
                   text, flags=re.IGNORECASE)
-    text = re.sub(r'\d{1,2}[/-]\d{1,2}[/-]\d{2,4}', '', text)  # e.g., 12/05/2020
-    text = re.sub(r'\b(19|20)\d{2}\b', '', text)  # e.g., 2020, 1999
+    text = re.sub(r'\d{1,2}[/-]\d{1,2}[/-]\d{2,4}', '', text)  
+    text = re.sub(r'\b(19|20)\d{2}\b', '', text) 
     return text
 
 
@@ -171,31 +171,31 @@ def clean_caption_text(text: str, remove_stopwords: bool = False) -> str:
     if pd.isna(text):
         return ""
     
-    # Convert to lowercase
+    # converts to lowercase
     text = text.lower()
     
-    # Remove weird characters
+    # removes weird characters
     text = text.replace("�", "")
     
-    # Remove URLs
+    # removes URLs
     text = re.sub(r'http\S+|www\S+|https\S+', '', text)
     
-    # Remove mentions (@username)
+    # removse mentions (@username)
     text = re.sub(r'@\w+', '', text)
     
-    # Remove hashtags but keep the word
+    # removes hashtags but keep the word
     text = re.sub(r'#', '', text)
     
-    # Remove punctuation
+    # removes punctuation
     text = text.translate(str.maketrans('', '', string.punctuation))
     
-    # Remove numbers
+    # removes numbers
     text = re.sub(r'\d+', '', text)
     
-    # Remove extra spaces
+    # removes extra spaces
     text = re.sub(r'\s+', ' ', text).strip()
     
-    # Remove stopwords if needed
+    # removes stopwords
     if remove_stopwords:
         text = ' '.join([word for word in text.split() if word not in all_stopwords])
     
@@ -216,11 +216,7 @@ def count_hashtags(text: str) -> int:
 def fix_encoding_issues(text: str) -> str:
     if pd.isna(text):
         return ""
-    
-    # Encode to bytes then decode as UTF-8, ignoring errors
     fixed = text.encode('latin1', errors='ignore').decode('utf-8', errors='ignore')
-    
-    # Remove any lingering replacement chars
     fixed = fixed.replace("�", "")
     
     return fixed

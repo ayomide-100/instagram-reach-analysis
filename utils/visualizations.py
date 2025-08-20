@@ -71,7 +71,7 @@ def plt_pie2(df, title):
 
     plt.figure(figsize=(6, 6))
     plt.pie(sizes, labels=labels, autopct="%1.1f%%", startangle=140)
-    plt.axis("equal")  # Equal aspect ratio ensures a circle.
+    plt.axis("equal")  
     plt.title(title)
     plt.show()
 

@@ -9,7 +9,7 @@ class TfidfWrapper(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         X = self._preprocess(X)
         self.vectorizer.fit(X)
-        return self  # <--- MUST return self
+        return self  
 
     def transform(self, X):
         X = self._preprocess(X)
@@ -17,7 +17,7 @@ class TfidfWrapper(BaseEstimator, TransformerMixin):
     
     def _preprocess(self, X):
         if isinstance(X, pd.DataFrame):
-            # Flatten all values across columns into strings
+
             return X.astype(str).agg(' '.join, axis=1).tolist()
         elif isinstance(X, pd.Series):
             return X.astype(str).tolist()

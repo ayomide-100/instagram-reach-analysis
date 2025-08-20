@@ -2,64 +2,40 @@ import sys, os
 import numpy as np
 import pandas as pd
 import joblib
-from lightgbm import LGBMRegressor
-from xgboost import XGBRegressor
-from sklearn.linear_model import ElasticNet, Lasso, Ridge, LinearRegression
-from sklearn.svm import SVR
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.linear_model import Ridge, PassiveAggressiveRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, VotingRegressor
 from sklearn.pipeline import Pipeline
 from pipeline import *
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split, cross_val_score, RepeatedKFold
+from sklearn.metrics import mean_squared_error, r2_score, root_mean_squared_error
 
-sys.path.append(os.path.abspath('../data'))
-sys.path.append(os.path.abspath('../models'))
+
+sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '../data')))
+sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '../models')))
+
 df = pd.read_csv("data/processed/clean_data.csv")
 
-xgbr = XGBRegressor(
-    n_estimators=100,
-    learning_rate=0.01,
-    max_depth=7,
-    subsample=0.8,
-    random_state=42,
-    n_jobs=-1
-)
+par = PassiveAggressiveRegressor(random_state=42)
 
-rf  = RandomForestRegressor(
-    n_estimators=500,
-    max_depth=20,
-    min_samples_split=5,
-    min_samples_leaf=2,
-    max_features="sqrt",
-    bootstrap=True,
-    n_jobs=-1,
-    random_state=42,
-    oob_score=True
-)
-
-
-
-
-
-
-
-
-ridge_model = Ridge(
-    alpha=10,          # regularization strength
-    fit_intercept=True, 
-    solver="auto",      # let sklearn choose the best one
-    random_state=42
-)
 
 gbr = GradientBoostingRegressor(
-    n_estimators=50,       # Reduced from 200
-    learning_rate=0.05,    # Slightly increased to compensate for fewer estimators
-    max_depth=3,           # Reduced from 5
-    min_samples_leaf=5,    # Increased from 4
-    subsample=0.8,
-    random_state=42
+        n_estimators=200,
+        learning_rate=0.05,
+        max_depth=3,
+        min_samples_leaf=5,
+        random_state=42
 )
+
+ridge = Ridge(alpha=7, random_state=42)
+
+
+ensemble = VotingRegressor(estimators=[
+    ('ridge', ridge),
+    ('gbr', gbr)
+], weights=[0.01, 0.99])
+
 
 
 pipeline = Pipeline([
@@ -67,32 +43,29 @@ pipeline = Pipeline([
     ('model', gbr)
 ])
 
-X = df.drop(columns=['Impressions', 'Timestamp', 'HashtagCount',
-                    'Profile Visits', 'Saves', 'Shares',
-                    'From Home', 'From Hashtags', 'From Explore',
-                    'From Other', 'Comments', 'Follows', 'Likes', 
-                    'FromHomeRatio', 'FromHashtagsRatio', 'EngagementRate',
-                    'FromExploreRatio', 'FromOtherRatio', 'NumOfHashtags'])
 
-y = df["Impressions"]
+X = df.drop(columns=['Impressions', 'Timestamp', 'NumOfHashtags',
+                     'From Home', 'From Hashtags', 'From Explore', 'From Other', 'Follows',
+                     'FromHomeRatio', 'FromHashtagsRatio', 'EngagementRate', 'FromExploreRatio', 
+                     'FromOtherRatio', 'Content Type', 'Caption', 'Hashtags'])
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
-# Train
-pipeline.fit(X_train, y_train)
-scores = cross_val_score(pipeline, X, y, cv=5, scoring= 'neg_mean_squared_error')
+y = np.log1p(df["Impressions"])  # log(1 + x)
 
-# Evaluate
-y_pred = pipeline.predict(X_test)
-print("MSE:", mean_squared_error(y_test, y_pred))
-print("R2:", r2_score(y_test, y_pred))
+bins = pd.qcut(df["Impressions"], q=5, duplicates="drop")
+cv = RepeatedKFold(n_splits=5, n_repeats=5, random_state=42)
+scores = cross_val_score(pipeline, X, y, cv=cv, scoring='neg_mean_squared_error')
+r2_scores = cross_val_score(pipeline, X, y, cv=cv, scoring='r2')
+
 
 rmse_scores = np.sqrt(-scores)
-print(f"RMSE scores for each fold: {rmse_scores}")
+
+
+print(f"RMSE score for fold: {rmse_scores}")
 print(f"Average RMSE: {rmse_scores.mean():.4f}")
 print(f"Standard Deviation of RMSE: {rmse_scores.std():.4f}")
-# Save trained model
 
-joblib.dump(pipeline, "models/ml_models/impressions_model.pkl")
-print("Model saved as impressions_model.pkl")
+print(f"R2 score for folds: {r2_scores}")
+print("Mean R2 score:", r2_scores.mean())
+print("Standard deviation of R2 scores:", r2_scores.std())
+
+

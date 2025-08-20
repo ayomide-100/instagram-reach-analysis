@@ -1,14 +1,25 @@
 # instagram-reach-analysis
-#  Instagram Reach Analysis and Engagement Prediction
+---
+##  Instagram Reach Analysis and Prediction
 
-This project explores and analyzes Instagram data to identify trends, user engagement patterns, and factors that contribute to reach. It uses various data visualization and machine learning tools to gain insights from the dataset.
+Predict Instagram **Impressions** from early engagement signals and post metadata.  
+Built with scikit-learn pipelines (feature engineering + model), TF-IDF for text when needed, and a Streamlit app for simple and fast inference.
 
 ## Project Overview
+---
+**Goal**: Analyze and visualize the factors that impact user engagement and content reach on Instagram.
 
-- **Data Source**: `instagram_data.csv`
-- **Goal**: Analyze and visualize the factors that impact user engagement and content reach on Instagram.
+
+- Cleans and engineers features from raw Instagram post data.
+- Trains  models (includes regularized linear models, tree boosting, and an ensemble).
+- Uses **log1p(Impressions)** as the target for stability.
+- Evaluates with repeated stratified CV on binned targets to reduce variance on small data.
+- Serves predictions and Insight with visualizations via **Streamlit**.
+- Saves & loads the **entire pipeline** (preprocessing + model) for reproducible inference.
+
 
 ##  Key Features
+---
 
 - Data Cleaning & Preprocessing
 - Exploratory Data Analysis (EDA)
@@ -21,48 +32,34 @@ This project explores and analyzes Instagram data to identify trends, user engag
 - Feature engineering and selection
 
 ## Libraries Used
+---
 
-- `numpy`
-- `pandas`
-- `seaborn`
-- `matplotlib`
-- `plotly`
-- `wordcloud`
-- `scikit-learn`
+- See `requirements.txt` file for the libraries used 
 
-## Getting Started
 
-### Prerequisites
 
-Make sure you have the following installed:
+## How to Run
+---
 
-```bash
-pip install pandas numpy seaborn matplotlib plotly wordcloud scikit-learn
-```
+- Clone the repository using `git clone <repo link>`
+- Then type `streamlit run main.py` in your terminal
 
-### How to Run
-
-1. Clone the repository or download the notebook.
-2. Place the `InstagramData.csv` file in the same directory.
-3. Launch the notebook using Jupyter:
-
-```bash
-jupyter notebook reach-analysis.ipynb
-```
 
 ##  Example Outputs
+---
 
 - Heatmaps and bar charts showing engagement metrics
-- Word clouds of common captions
+- Time-Series Charts
 - Visual correlations between features and reach
 
-## Future Work
-
-- Apply classification or regression models to predict reach
-- Test additional feature engineering techniques
-- Analyze time-series engagement patterns
-
 ##  Author
+---
 
 - Ayomide Adegoke
 - dynamic.ayo100@gmail.com
+
+
+
+
+
+
